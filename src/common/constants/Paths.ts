@@ -1,11 +1,11 @@
 
 export default {
   Base: '/api',
-  Users: {
-    Base: '/users',
-    Get: '/all',
-    Add: '/add',
-    Update: '/update',
-    Delete: '/delete/:id',
+  Units: {
+    Base: '/units',
+    Get: '/',
+    Create: '/',
+    Update: '/:id',
+    GetOne: '/:id',
   },
 } as const;
