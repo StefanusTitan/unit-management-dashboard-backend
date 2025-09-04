@@ -2,7 +2,7 @@ import jsonfile from 'jsonfile';
 
 import ENV from '@src/common/constants/ENV';
 import { NodeEnvs } from '@src/common/constants';
-import { IUser } from '@src/models/User';
+import { IUnit } from '@src/models/Unit';
 
 
 /******************************************************************************
@@ -21,7 +21,7 @@ const DB_FILE_NAME = (
 ******************************************************************************/
 
 interface IDb {
-  users: IUser[];
+  units: IUnit[];
 }
 
 
