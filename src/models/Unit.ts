@@ -9,11 +9,12 @@ import { IModel } from './common/types';
                                  Constants
 ******************************************************************************/
 
-const DEFAULT_USER_VALS = (): IUser => ({
+const DEFAULT_UNIT_VALS = (): IUnit => ({
   id: -1,
   name: '',
-  created: new Date(),
-  email: '',
+  type: Type.Capsule,
+  status: UnitStatus.Available,
+  lastUpdated: new Date().toISOString(),
 });
 
 
@@ -21,9 +22,23 @@ const DEFAULT_USER_VALS = (): IUser => ({
                                   Types
 ******************************************************************************/
 
-export interface IUser extends IModel {
+export interface IUnit extends IModel {
   name: string;
-  email: string;
+  type: Type;
+  status: UnitStatus;
+}
+
+
+export enum UnitStatus {
+  Available = 'Available',
+  Occupied = 'Occupied',
+  CleaningInProgress = 'Cleaning In Progress',
+  MaintenanceNeeded = 'Maintenance Needed',
+}
+
+export enum Type {
+  Capsule = 'capsule',
+  Cabin = 'cabin',
 }
 
 
@@ -31,12 +46,22 @@ export interface IUser extends IModel {
                                   Setup
 ******************************************************************************/
 
-// Initialize the "parseUser" function
-const parseUser = parseObject<IUser>({
+// Custom validator for UnitStatus enum
+const isUnitStatus = (val: unknown): val is UnitStatus => {
+  return typeof val === 'string' && Object.values(UnitStatus).includes(val as UnitStatus);
+};
+
+const isType = (val: unknown): val is Type => {
+  return typeof val === 'string' && Object.values(Type).includes(val as Type);
+}
+
+// Initialize the "parseUnit" function
+const parseUnit = parseObject<IUnit>({
   id: isRelationalKey,
   name: isString,
-  email: isString,
-  created: transIsDate,
+  type: isType,
+  status: isUnitStatus,
+  lastUpdated: transIsDate,
 });
 
 
@@ -45,20 +70,20 @@ const parseUser = parseObject<IUser>({
 ******************************************************************************/
 
 /**
- * New user object.
+ * New unit object.
  */
-function __new__(user?: Partial<IUser>): IUser {
-  const retVal = { ...DEFAULT_USER_VALS(), ...user };
-  return parseUser(retVal, errors => {
-    throw new Error('Setup new user failed ' + JSON.stringify(errors, null, 2));
+function __new__(unit?: Partial<IUnit>): IUnit {
+  const retVal = { ...DEFAULT_UNIT_VALS(), ...unit };
+  return parseUnit(retVal, errors => {
+    throw new Error('Setup new unit failed ' + JSON.stringify(errors, null, 2));
   });
 }
 
 /**
- * Check is a user object. For the route validation.
+ * Check is a unit object. For the route validation.
  */
-function test(arg: unknown, errCb?: TParseOnError): arg is IUser {
-  return !!parseUser(arg, errCb);
+function test(arg: unknown, errCb?: TParseOnError): arg is IUnit {
+  return !!parseUnit(arg, errCb);
 }
 
 
