@@ -11,7 +11,7 @@ import orm from './MockOrm';
 /**
  * See if a user with the given id exists.
  */
-async function persists(id: number): Promise<boolean> {
+async function persists(id: string): Promise<boolean> {
   const db = await orm.openDb();
   for (const unit of db.units) {
     if (unit.id === id) {
@@ -32,9 +32,8 @@ async function getAll(): Promise<IUnit[]> {
 /**
  * Add one unit.
  */
-async function add(unit: IUnit): Promise<void> {
+async function create(unit: IUnit): Promise<void> {
   const db = await orm.openDb();
-  unit.id = getRandomInt();
   db.units.push(unit);
   return orm.saveDb(db);
 }
@@ -62,7 +61,7 @@ async function update(unit: IUnit): Promise<void> {
 /**
  * Get one unit.
  */
-async function getOne(id: number): Promise<IUnit | null> {
+async function getOne(id: string): Promise<IUnit | null> {
   const db = await orm.openDb();
   for (const unit of db.units) {
     if (unit.id === id) {
@@ -91,7 +90,7 @@ export default {
   getOne,
   persists,
   getAll,
-  add,
+  create,
   update,
   deleteAllUnits,
 } as const;
