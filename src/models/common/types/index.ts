@@ -1,5 +1,5 @@
 
 export interface IModel {
-  id: number;
+  id: string;
   lastUpdated: string;
 }

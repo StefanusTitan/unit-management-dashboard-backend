@@ -1,5 +1,6 @@
 import { isString } from 'jet-validators';
 import { parseObject, TParseOnError } from 'jet-validators/utils';
+import { uuid } from 'uuidv4';
 
 import { isRelationalKey, transIsDate } from '@src/common/util/validators';
 import { IModel } from './common/types';
@@ -10,7 +11,7 @@ import { IModel } from './common/types';
 ******************************************************************************/
 
 const DEFAULT_UNIT_VALS = (): IUnit => ({
-  id: -1,
+  id: uuid(),
   name: '',
   type: Type.Capsule,
   status: UnitStatus.Available,
@@ -64,6 +65,13 @@ const parseUnit = parseObject<IUnit>({
   lastUpdated: transIsDate,
 });
 
+// Parser for incoming create payload
+const parseUnitCreate = parseObject<Pick<IUnit, 'name' | 'type' | 'status'>>({
+  name: isString,
+  type: isType,
+  status: isUnitStatus,
+});
+
 
 /******************************************************************************
                                  Functions
@@ -86,6 +94,13 @@ function test(arg: unknown, errCb?: TParseOnError): arg is IUnit {
   return !!parseUnit(arg, errCb);
 }
 
+/**
+ * Validate raw create request payload (without id/lastUpdated).
+ */
+function testCreate(arg: unknown, errCb?: TParseOnError): arg is Pick<IUnit, 'name' | 'type' | 'status'> {
+  return !!parseUnitCreate(arg, errCb);
+}
+
 
 /******************************************************************************
                                 Export default
@@ -94,4 +109,5 @@ function test(arg: unknown, errCb?: TParseOnError): arg is IUnit {
 export default {
   new: __new__,
   test,
+  testCreate,
 } as const;

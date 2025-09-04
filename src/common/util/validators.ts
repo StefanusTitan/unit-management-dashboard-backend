@@ -1,4 +1,4 @@
-import { isNumber, isDate } from 'jet-validators';
+import { isUuid } from 'uuidv4';
 import { transform } from 'jet-validators/utils';
 
 
@@ -9,8 +9,8 @@ import { transform } from 'jet-validators/utils';
 /**
  * Database relational key.
  */
-export function isRelationalKey(arg: unknown): arg is number {
-  return isNumber(arg) && arg >= -1;
+export function isRelationalKey(arg: unknown): arg is string {
+  return typeof arg === 'string' && isUuid(arg);
 }
 
 /**
