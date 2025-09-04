@@ -72,6 +72,10 @@ const parseUnitCreate = parseObject<Pick<IUnit, 'name' | 'type' | 'status'>>({
   status: isUnitStatus,
 });
 
+// Parser for incoming update payload (partial)
+const parseUnitUpdate = parseObject<Pick<IUnit, 'status'>>({
+  status: isUnitStatus,
+});
 
 /******************************************************************************
                                  Functions
@@ -101,6 +105,13 @@ function testCreate(arg: unknown, errCb?: TParseOnError): arg is Pick<IUnit, 'na
   return !!parseUnitCreate(arg, errCb);
 }
 
+/**
+ * Validate raw update request payload (partial).
+ */
+function testUpdate(arg: unknown, errCb?: TParseOnError): arg is Pick<IUnit, 'status'> {
+  return !!parseUnitUpdate(arg, errCb);
+}
+
 
 /******************************************************************************
                                 Export default
@@ -110,4 +121,5 @@ export default {
   new: __new__,
   test,
   testCreate,
+  testUpdate,
 } as const;

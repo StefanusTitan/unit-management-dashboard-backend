@@ -41,17 +41,14 @@ async function create(unit: IUnit): Promise<void> {
 /**
  * Update a unit.
  */
-async function update(unit: IUnit): Promise<void> {
+async function update(id: string, unit: Partial<IUnit>): Promise<void> {
   const db = await orm.openDb();
   for (let i = 0; i < db.units.length; i++) {
-    if (db.units[i].id === unit.id) {
+    if (db.units[i].id === id) {
       const dbUnit = db.units[i];
       db.units[i] = {
         ...dbUnit,
-        name: unit.name,
-        type: unit.type,
-        status: unit.status,
-        lastUpdated: unit.lastUpdated,
+        ...unit,
       };
       return orm.saveDb(db);
     }
