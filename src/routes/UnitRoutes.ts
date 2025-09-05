@@ -23,9 +23,9 @@ const Validators = {
   // Optional query filters for getAll
   getAll: parseReq({
     query: {
-      name: transform(String, isString),
-      status: transform(String, Unit.testUpdate as any),
-      type: transform(String, isString),
+      name: (val: unknown) => val === undefined || isString(val),
+      status: (val: unknown) => val === undefined || isString(val),
+      type: (val: unknown) => val === undefined || isString(val),
     },
   }),
 } as const;
@@ -40,7 +40,7 @@ const Validators = {
  */
 async function getAll(_: IReq, res: IRes) {
   // Validate and extract optional query filters
-  const { query } = Validators.getAll(_.query || {} as any);
+  const { query } = Validators.getAll({ query: _.query || {} });
   // Only forward provided filters
   const filters: Record<string, unknown> = {};
   if (query?.name) filters.name = query.name;
