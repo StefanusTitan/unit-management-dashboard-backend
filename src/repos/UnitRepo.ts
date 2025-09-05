@@ -24,9 +24,26 @@ async function persists(id: string): Promise<boolean> {
 /**
  * Get all units.
  */
-async function getAll(): Promise<IUnit[]> {
+type IUnitFilters = Partial<Pick<IUnit, 'name' | 'status' | 'type'>>;
+
+async function getAll(filters?: IUnitFilters): Promise<IUnit[]> {
   const db = await orm.openDb();
-  return db.units;
+  let units = db.units;
+
+  if (filters) {
+    if (filters.name) {
+      const needle = filters.name.toLowerCase();
+      units = units.filter(u => u.name.toLowerCase().includes(needle));
+    }
+    if (filters.status) {
+      units = units.filter(u => u.status === filters.status);
+    }
+    if (filters.type) {
+      units = units.filter(u => u.type === filters.type);
+    }
+  }
+
+  return units;
 }
 
 /**

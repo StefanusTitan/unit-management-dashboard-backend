@@ -20,6 +20,14 @@ const Validators = {
     body: { unit: Unit.testUpdate },
   }),
   getOne: parseReq({ id: transform(String, isString) }),
+  // Optional query filters for getAll
+  getAll: parseReq({
+    query: {
+      name: transform(String, isString),
+      status: transform(String, Unit.testUpdate as any),
+      type: transform(String, isString),
+    },
+  }),
 } as const;
 
 
@@ -31,7 +39,15 @@ const Validators = {
  * Get all units.
  */
 async function getAll(_: IReq, res: IRes) {
-  const units = await UnitService.getAll();
+  // Validate and extract optional query filters
+  const { query } = Validators.getAll(_.query || {} as any);
+  // Only forward provided filters
+  const filters: Record<string, unknown> = {};
+  if (query?.name) filters.name = query.name;
+  if (query?.status) filters.status = query.status;
+  if (query?.type) filters.type = query.type;
+
+  const units = await UnitService.getAll(filters);
   res.status(HttpStatusCodes.OK).json({ units });
 }
 

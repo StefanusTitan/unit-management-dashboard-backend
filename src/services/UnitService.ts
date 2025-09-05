@@ -2,7 +2,7 @@ import { RouteError } from '@src/common/util/route-errors';
 import HttpStatusCodes from '@src/common/constants/HttpStatusCodes';
 
 import UnitRepo from '@src/repos/UnitRepo';
-import { IUnit, UnitStatus } from '@src/models/Unit';
+import { IUnit, UnitStatus, Type } from '@src/models/Unit';
 
 
 /******************************************************************************
@@ -19,8 +19,10 @@ export const UNIT_NOT_FOUND_ERR = 'Unit not found!';
 /**
  * Get all units.
  */
-function getAll(): Promise<IUnit[]> {
-  return UnitRepo.getAll();
+type IUnitFilters = Partial<Pick<IUnit, 'name' | 'status' | 'type'>>;
+
+function getAll(filters?: IUnitFilters): Promise<IUnit[]> {
+  return UnitRepo.getAll(filters);
 }
 
 /**
