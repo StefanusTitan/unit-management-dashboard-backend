@@ -1,6 +1,6 @@
 import { isString } from 'jet-validators';
 import { parseObject, TParseOnError } from 'jet-validators/utils';
-import { uuid } from 'uuidv4';
+import { v4 as uuidv4 } from 'uuid';
 
 import { isRelationalKey, transIsDate } from '@src/common/util/validators';
 import { IModel } from './common/types';
@@ -11,7 +11,7 @@ import { IModel } from './common/types';
 ******************************************************************************/
 
 const DEFAULT_UNIT_VALS = (): IUnit => ({
-  id: uuid(),
+  id: uuidv4(),
   name: '',
   type: Type.Capsule,
   status: UnitStatus.Available,
