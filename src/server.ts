@@ -3,6 +3,7 @@ import path from 'path';
 import helmet from 'helmet';
 import express, { Request, Response, NextFunction } from 'express';
 import logger from 'jet-logger';
+import cors from 'cors';
 
 import BaseRouter from '@src/routes';
 
@@ -21,6 +22,11 @@ const app = express();
 
 
 // **** Middleware **** //
+
+// CORS
+app.use(cors({
+  origin: 'http://localhost:4000',
+}));
 
 // Basic middleware
 app.use(express.json());
