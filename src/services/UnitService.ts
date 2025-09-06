@@ -52,6 +52,8 @@ async function updateOne(id: string, unit: Partial<IUnit>): Promise<void> {
     );
   }
 
+  unit.lastUpdated = new Date().toISOString();
+
   // Return unit
   return UnitRepo.update(id, unit);
 }
