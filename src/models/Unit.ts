@@ -66,10 +66,9 @@ const parseUnit = parseObject<IUnit>({
 });
 
 // Parser for incoming create payload
-const parseUnitCreate = parseObject<Pick<IUnit, 'name' | 'type' | 'status'>>({
+const parseUnitCreate = parseObject<Pick<IUnit, 'name' | 'type'>>({
   name: isString,
   type: isType,
-  status: isUnitStatus,
 });
 
 // Parser for incoming update payload (partial)
@@ -85,7 +84,7 @@ const parseUnitUpdate = parseObject<Pick<IUnit, 'status'>>({
  * New unit object.
  */
 function __new__(unit?: Partial<IUnit>): IUnit {
-  const retVal = { ...DEFAULT_UNIT_VALS(), ...unit };
+  const retVal = { ...DEFAULT_UNIT_VALS(), ...unit, status: UnitStatus.Available };
   return parseUnit(retVal, errors => {
     throw new Error('Setup new unit failed ' + JSON.stringify(errors, null, 2));
   });
@@ -101,7 +100,7 @@ function test(arg: unknown, errCb?: TParseOnError): arg is IUnit {
 /**
  * Validate raw create request payload (without id/lastUpdated).
  */
-function testCreate(arg: unknown, errCb?: TParseOnError): arg is Pick<IUnit, 'name' | 'type' | 'status'> {
+function testCreate(arg: unknown, errCb?: TParseOnError): arg is Pick<IUnit, 'name' | 'type'> {
   return !!parseUnitCreate(arg, errCb);
 }
 
