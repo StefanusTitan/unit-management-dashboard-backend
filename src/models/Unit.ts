@@ -49,12 +49,13 @@ export enum Type {
 
 // Custom validator for UnitStatus enum
 const isUnitStatus = (val: unknown): val is UnitStatus => {
-  return typeof val === 'string' && Object.values(UnitStatus).includes(val as UnitStatus);
+  return typeof val === 'string' && 
+    Object.values(UnitStatus).includes(val as UnitStatus);
 };
 
 const isType = (val: unknown): val is Type => {
   return typeof val === 'string' && Object.values(Type).includes(val as Type);
-}
+};
 
 // Initialize the "parseUnit" function
 const parseUnit = parseObject<IUnit>({
@@ -84,9 +85,14 @@ const parseUnitUpdate = parseObject<Pick<IUnit, 'status'>>({
  * New unit object.
  */
 function __new__(unit?: Partial<IUnit>): IUnit {
-  const retVal = { ...DEFAULT_UNIT_VALS(), ...unit, status: UnitStatus.Available };
+  const retVal = { 
+    ...DEFAULT_UNIT_VALS(), 
+    ...unit, 
+    status: UnitStatus.Available, 
+  };
   return parseUnit(retVal, errors => {
-    throw new Error('Setup new unit failed ' + JSON.stringify(errors, null, 2));
+    throw new Error('Setup new unit failed ' + 
+      JSON.stringify(errors, null, 2));
   });
 }
 
@@ -100,14 +106,20 @@ function test(arg: unknown, errCb?: TParseOnError): arg is IUnit {
 /**
  * Validate raw create request payload (without id/lastUpdated).
  */
-function testCreate(arg: unknown, errCb?: TParseOnError): arg is Pick<IUnit, 'name' | 'type'> {
+function testCreate(
+  arg: unknown, 
+  errCb?: TParseOnError,
+): arg is Pick<IUnit, 'name' | 'type'> {
   return !!parseUnitCreate(arg, errCb);
 }
 
 /**
  * Validate raw update request payload (partial).
  */
-function testUpdate(arg: unknown, errCb?: TParseOnError): arg is Pick<IUnit, 'status'> {
+function testUpdate(
+  arg: unknown, 
+  errCb?: TParseOnError,
+): arg is Pick<IUnit, 'status'> {
   return !!parseUnitUpdate(arg, errCb);
 }
 

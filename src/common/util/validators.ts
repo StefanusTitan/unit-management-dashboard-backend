@@ -30,7 +30,7 @@ export const transIsDate = transform(
     if (!isValidISODateString(arg)) {
       throw new Error('Invalid ISO date string');
     }
-    return arg as string;
+    return arg;
   },
   isValidISODateString,
 );

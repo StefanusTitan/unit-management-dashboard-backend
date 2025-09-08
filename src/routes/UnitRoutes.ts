@@ -65,7 +65,10 @@ async function create(req: IReq, res: IRes) {
  * Update one unit (status).
  */
 async function update(req: IReq, res: IRes) {
-  const { params: { id }, body: { unit } } = Validators.update({ params: req.params, body: req.body });
+  const { 
+    params: { id }, 
+    body: { unit }, 
+  } = Validators.update({ params: req.params, body: req.body });
   await UnitService.updateOne(id, unit);
   res.status(HttpStatusCodes.OK).json({ unit: { id, ...unit } }).end();
 }

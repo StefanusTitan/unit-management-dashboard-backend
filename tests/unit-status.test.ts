@@ -14,8 +14,9 @@ import { agent } from './support/setup';
                                Constants
 ******************************************************************************/
 
-// Note: Unit.new always initializes status to Available regardless of provided override.
-// We'll create two units then manually set one to Occupied for transition tests.
+// Note: Unit.new always initializes status to Available regardless of 
+// provided override. We'll create two units then manually set one to 
+// Occupied for transition tests.
 const DB_UNITS = [
   { name: 'Test-Capsule', type: Type.Capsule },
   { name: 'Test-Cabin', type: Type.Cabin },
@@ -35,7 +36,7 @@ describe('Unit status transitions', () => {
     // Create fresh units (all start as Available)
     for (const u of DB_UNITS) {
       const unitObj = Unit.new({ name: u.name, type: u.type });
-      await UnitRepo.create(unitObj as IUnit);
+      await UnitRepo.create(unitObj);
     }
     dbUnits = await UnitRepo.getAll();
     // Set first unit to Occupied to test transitions
@@ -44,33 +45,41 @@ describe('Unit status transitions', () => {
     dbUnits = await UnitRepo.getAll();
   });
 
-  // Helper to build update path
-  const updatePath = (id: string) => insertUrlParams(Paths.Units.Update, { id });
+  const updatePath = (id: string) => 
+    insertUrlParams(Paths.Units.Update, { id });
 
   it('should forbid making an Occupied unit directly Available', async () => {
-    const occupied = dbUnits.find(u => u.status === UnitStatus.Occupied)!;
-    const res = await agent.put(updatePath(occupied.id)).send({ unit: { status: UnitStatus.Available } });
+    const occupied = dbUnits.find(u => u.status === UnitStatus.Occupied);
+    const res = await agent.put(updatePath(occupied!.id))
+      .send({ unit: { status: UnitStatus.Available } });
     expect(res.status).toBe(HttpStatusCodes.BAD_REQUEST);
   });
 
   it('should allow changing Occupied to Cleaning In Progress', async () => {
-    const occupied = dbUnits.find(u => u.status === UnitStatus.Occupied)!;
-    const res = await agent.put(updatePath(occupied.id)).send({ unit: { status: UnitStatus.CleaningInProgress } });
+    const occupied = dbUnits.find(u => u.status === UnitStatus.Occupied);
+    const res = await agent.put(updatePath(occupied!.id))
+      .send({ unit: { status: UnitStatus.CleaningInProgress } });
     expect(res.status).toBe(HttpStatusCodes.OK);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     expect(res.body.unit.status).toBe(UnitStatus.CleaningInProgress);
   });
 
   it('should allow changing Occupied to Maintenance Needed', async () => {
-    const occupied = dbUnits.find(u => u.status === UnitStatus.Occupied)!;
-    const res = await agent.put(updatePath(occupied.id)).send({ unit: { status: UnitStatus.MaintenanceNeeded } });
+    const occupied = dbUnits.find(u => u.status === UnitStatus.Occupied);
+    const res = await agent.put(updatePath(occupied!.id))
+      .send({ unit: { status: UnitStatus.MaintenanceNeeded } });
     expect(res.status).toBe(HttpStatusCodes.OK);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     expect(res.body.unit.status).toBe(UnitStatus.MaintenanceNeeded);
   });
 
   it('should return NOT_FOUND for non-existent unit id', async () => {
-    const res = await agent.put(updatePath('non-existent-id')).send({ unit: { status: UnitStatus.Available } });
+    const res = await agent.put(updatePath('non-existent-id'))
+      .send({ unit: { status: UnitStatus.Available } });
     expect(res.status).toBe(HttpStatusCodes.NOT_FOUND);
-    // Service returns RouteError which the server converts to an error string body
+    // Service returns RouteError which the server converts to an error 
+    // string body
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     expect(res.body.error).toBe(UNIT_NOT_FOUND_ERR);
   });
 

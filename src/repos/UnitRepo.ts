@@ -1,5 +1,4 @@
 import { IUnit } from '@src/models/Unit';
-import { getRandomInt } from '@src/common/util/misc';
 
 import orm from './MockOrm';
 
