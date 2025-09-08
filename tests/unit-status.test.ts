@@ -14,9 +14,11 @@ import { agent } from './support/setup';
                                Constants
 ******************************************************************************/
 
+// Note: Unit.new always initializes status to Available regardless of provided override.
+// We'll create two units then manually set one to Occupied for transition tests.
 const DB_UNITS = [
-  Unit.new({ name: 'Test-Capsule', type: Type.Capsule, status: UnitStatus.Occupied }),
-  Unit.new({ name: 'Test-Cabin', type: Type.Cabin, status: UnitStatus.Available }),
+  { name: 'Test-Capsule', type: Type.Capsule },
+  { name: 'Test-Cabin', type: Type.Cabin },
 ] as const;
 
 
@@ -30,11 +32,15 @@ describe('Unit status transitions', () => {
 
   beforeEach(async () => {
     await UnitRepo.deleteAllUnits();
-    dbUnits = await UnitRepo.create ? await UnitRepo.getAll() : [];
-    // insert units by creating them via repo
+    // Create fresh units (all start as Available)
     for (const u of DB_UNITS) {
-      await UnitRepo.create(u as IUnit);
+      const unitObj = Unit.new({ name: u.name, type: u.type });
+      await UnitRepo.create(unitObj as IUnit);
     }
+    dbUnits = await UnitRepo.getAll();
+    // Set first unit to Occupied to test transitions
+    const first = dbUnits[0];
+    await UnitRepo.update(first.id, { status: UnitStatus.Occupied });
     dbUnits = await UnitRepo.getAll();
   });
 
